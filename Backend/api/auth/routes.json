@@ -1,0 +1,32 @@
+[
+    {
+        "path" : "/signup",
+        "action" : "auth.adminSignup",
+        "public" : true,
+        "globalMiddlewares": [],
+        "middlewares": [],
+        "pathFromRoot": false,
+        "enabled": true
+    },
+    {
+        "path" : "/login",
+        "method" : "ooo",
+        "action" : "auth.adminLogin",
+        "public" : true,
+        "globalMiddlewares": [],
+        "middlewares": [],
+        "pathFromRoot": false,
+        "enabled": true
+    }
+
+
+
+
+
+
+
+
+
+
+    
+]
