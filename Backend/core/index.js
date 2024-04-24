@@ -3,13 +3,18 @@ var fs = require('fs');
 var colors = require('colors')
 const { adminSignup, adminLogin } = require('../api/auth/controllers/authController');
 
+function logRequest(req, res, next) {
+    console.log(`[${new Date().toLocaleString()}] ${req.method} ${req.url}`);
+    next(); // Call the next middleware function
+}
+
 function createServer() {
     http.createServer(function (req, res) {
-        if (req.url == '/signup') {
+        logRequest(req,res,function(){if (req.url == '/signup') {
             adminSignup(req, res);
         } else if (req.url == '/login') {
             adminLogin(req, res);
-        }
+        }})
 
     }).listen(8080, () => {
         console.log('Server is running on port 8080');
