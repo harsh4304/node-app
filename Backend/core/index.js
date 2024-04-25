@@ -2,19 +2,19 @@ var http = require('http');
 var fs = require('fs');
 var colors = require('colors')
 const { adminSignup, adminLogin } = require('../api/auth/controllers/authController');
+require('../api/auth/framework');
 
-function logRequest(req, res, next) {
-    console.log(`[${new Date().toLocaleString()}] ${req.method} ${req.url}`);
-    next(); // Call the next middleware function
-}
+// global.framework = fW;
+
 
 function createServer() {
     http.createServer(function (req, res) {
-        logRequest(req,res,function(){if (req.url == '/signup') {
+        
+        if (req.url == '/signup') {
             adminSignup(req, res);
         } else if (req.url == '/login') {
             adminLogin(req, res);
-        }})
+        }
 
     }).listen(8080, () => {
         console.log('Server is running on port 8080');
@@ -39,7 +39,6 @@ loadRoutesData()
             const jsonArray = routes;
             let hasMissingKeys = false;
             let missingRoutes = [];
-
             const requiredKeys = ["path", "method", "action", "public", "pathFromRoot", "enabled"];
 
             jsonArray.forEach((obj, index) => {
@@ -87,7 +86,6 @@ loadRoutesData()
                     hasMissingKeys = true;
                 }
             });
-
             if (hasMissingKeys) {
                 colors.enable()
                 console.log('[Warning]: Some route objects are missing required keys or their values.'.yellow);
@@ -98,6 +96,7 @@ loadRoutesData()
             } else {
                 console.log(`All correct.. you can access routes`);
                 createServer();
+                framework.services.module1.module1Service.myService();
             }
         } catch (error) {
             console.error("Error parsing JSON:", error);
