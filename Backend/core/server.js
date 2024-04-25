@@ -2,8 +2,15 @@ var http = require('http');
 var fs = require('fs');
 var colors = require('colors')
 const { adminSignup, adminLogin } = require('../api/auth/controllers/authController');
-require('../api/auth/framework');
+const module1Service = require('../api/auth/services/module1Service');
 
+global.framework = {
+    services: {
+        module1: {
+            module1Service: module1Service,
+        }
+    }
+};
 function createServer() {
     http.createServer(function (req, res) {
         
