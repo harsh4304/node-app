@@ -4,9 +4,6 @@ var colors = require('colors')
 const { adminSignup, adminLogin } = require('../api/auth/controllers/authController');
 require('../api/auth/framework');
 
-// global.framework = fW;
-
-
 function createServer() {
     http.createServer(function (req, res) {
         
