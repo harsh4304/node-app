@@ -1,5 +1,3 @@
-    // Access framework directly from the global object
-    const framework = global.framework;
+const { framework } = require("./core/server");
 
-    // Now you can use `framework` as needed
-    console.log(framework);
+console.log(framework.services.module1.module1Service.myService1());

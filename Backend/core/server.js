@@ -35,7 +35,7 @@ function loadModulesAndServices() {
                 const a = service_name.split('S')[0];
                 const serviceModule = require(path.join(services_path, file));
                 services[a] = {
-                    [service_name]:serviceModule
+                    [service_name]: serviceModule
                 };
             }
         });
@@ -44,14 +44,35 @@ function loadModulesAndServices() {
     return services;
 }
 
+function loadUtilFunctions() {
+    const functions = {};
+    const functionsPath = path.join(__dirname, '..', 'functions');
+
+    const functions_directory = fs.readdirSync(functionsPath);
+
+
+
+    functions_directory.forEach(moduleFiles => {
+        const functions_files_path = path.join(functionsPath, moduleFiles);
+        const functions_file_name = path.basename(functions_files_path,'.js')
+        
+        const functionsModule = require(path.join(functionsPath, moduleFiles))
+        functions[functions_file_name] = functionsModule;
+    });
+
+    return functions;
+}
+
 global.framework = {
-    services: loadModulesAndServices()
+    services: loadModulesAndServices(),
+    functions: loadUtilFunctions()
 };
+
 
 
 function createServer() {
     http.createServer(function (req, res) {
-        
+
         if (req.url == '/signup') {
             adminSignup(req, res);
         } else if (req.url == '/login') {
@@ -90,23 +111,23 @@ loadRoutesData()
                 requiredKeys.forEach(key => {
                     if (!(key in obj)) {
                         missingKeys.push(key);
-                    } 
+                    }
                     else if (!obj[key] && obj[key] !== false) {
                         emptyValues.push(key);
-                    } 
+                    }
                     else if (key === "method" && (obj[key] != "POST" && obj[key] != "GET" && obj[key] != "PUT" && obj[key] != "PATCH" && obj[key] != "DELETE")) {
                         inValidValues.push(`\n[Error]: Invalid method (value) Configuration [Module]: routes.json [API]: ${obj.path}`);
-                        
-                    } 
+
+                    }
                     else if (key === "pathFromRoot" && obj[key] !== true && obj[key] != false) {
                         inValidValues.push(`\n[Error]: Invalid pathFromRoot (value) Configuration [Module]: routes.json [API]: ${obj.path}`);
-                    } 
+                    }
                     else if (key === "public" && obj[key] !== true && obj[key] != false) {
                         inValidValues.push(`\n[Error]: Invalid public (value) Configuration [Module]: routes.json [API]: ${obj.path}`);
-                    } 
+                    }
                     else if (key === "enabled" && obj[key] !== true && obj[key] != false) {
                         inValidValues.push(`\n[Error]: Invalid enabled (value) Configuration [Module]: routes.json [API]: ${obj.path}`);
-                    } 
+                    }
                     else if (key === "action" && obj[key] === "") {
                         inValidValues.push(`\n[Error]: Invalid action (value) Configuration [Module]: routes.json [API]: ${obj.path}`);
                     }
@@ -138,10 +159,13 @@ loadRoutesData()
             } else {
                 console.log(`All correct.. you can access routes`);
                 createServer();
-                
+
                 
                 framework.services.module1.module1Service.myService1();
                 framework.services.module2.module2Service.myService2();
+
+                framework.functions.fileUtils.fileFunction();
+                framework.functions.mathUtils.mathFunction();
             }
         } catch (error) {
             console.error("Error parsing JSON:", error);
@@ -152,3 +176,4 @@ loadRoutesData()
     });
 
 
+module.exports.framework = global.framework;
