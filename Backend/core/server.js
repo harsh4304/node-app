@@ -1,16 +1,54 @@
 var http = require('http');
 var fs = require('fs');
+const path = require('path');
 var colors = require('colors')
-const { adminSignup, adminLogin } = require('../api/auth/controllers/authController');
-const module1Service = require('../api/auth/services/module1Service');
+const { adminSignup, adminLogin } = require('../api/module1/controllers/authController');
+
+
+// Function to extract functions from a service file
+function loadModulesAndServices() {
+    const services = {};
+    let modules = {}
+    const modulesPath = path.join(__dirname, '..', 'api');
+
+    // Read the contents of the modules directory
+    const module_directory = fs.readdirSync(modulesPath);
+    modules = module_directory
+
+
+
+    // Iterate over each module directory
+    module_directory.forEach(moduleDir => {
+        const module_path = path.join(modulesPath, moduleDir);
+
+        // Check if it's a directory
+        // if (moduleStat.isDirectory()) {
+        const services_path = path.join(module_path, 'services');
+
+        const services_files = fs.readdirSync(services_path);
+
+        // Iterate over each file in the services directory
+        services_files.forEach(file => {
+            // Assuming services file starts with 'module'
+            if (file.startsWith('module')) {
+                const service_name = path.basename(file, '.js');
+                const a = service_name.split('S')[0];
+                const serviceModule = require(path.join(services_path, file));
+                services[a] = {
+                    [service_name]:serviceModule
+                };
+            }
+        });
+    });
+
+    return services;
+}
 
 global.framework = {
-    services: {
-        module1: {
-            module1Service: module1Service,
-        }
-    }
+    services: loadModulesAndServices()
 };
+
+
 function createServer() {
     http.createServer(function (req, res) {
         
@@ -27,7 +65,7 @@ function createServer() {
 
 function loadRoutesData() {
     return new Promise((resolve, reject) => {
-        fs.readFile('./api/auth/routes.json', (err, data) => {
+        fs.readFile('./api/module1/routes.json', (err, data) => {
             if (err) {
                 reject(err);
             } else {
@@ -100,7 +138,10 @@ loadRoutesData()
             } else {
                 console.log(`All correct.. you can access routes`);
                 createServer();
-                framework.services.module1.module1Service.myService();
+                
+                
+                framework.services.module1.module1Service.myService1();
+                framework.services.module2.module2Service.myService2();
             }
         } catch (error) {
             console.error("Error parsing JSON:", error);
@@ -109,3 +150,5 @@ loadRoutesData()
     .catch(error => {
         console.error("Error reading or validating routes:", error);
     });
+
+
