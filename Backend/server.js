@@ -2,7 +2,6 @@ var http = require('http');
 var fs = require('fs');
 const path = require('path');
 var colors = require('colors')
-const { adminSignup, adminLogin } = require('./api/module1/controllers/authController');
 
 function loadServicesInApi() {
     const services = {};
