@@ -2,14 +2,12 @@ var http = require('http');
 var fs = require('fs');
 const path = require('path');
 var colors = require('colors')
-const { adminSignup, adminLogin } = require('../api/module1/controllers/authController');
+const { adminSignup, adminLogin } = require('./api/module1/controllers/authController');
 
-
-// Function to extract functions from a service file
 function loadModulesAndServices() {
     const services = {};
     let modules = {}
-    const modulesPath = path.join(__dirname, '..', 'api');
+    const modulesPath = path.join(__dirname, '.', 'api');
 
     // Read the contents of the modules directory
     const module_directory = fs.readdirSync(modulesPath);
@@ -44,28 +42,67 @@ function loadModulesAndServices() {
     return services;
 }
 
+// function loadModulesAndServicesInCore() {
+//     const services = {};
+//     const services_path = path.join(__dirname, '.', 'core', 'services');
+
+//     const servicesDirectories = fs.readdirSync(services_path);
+
+//     servicesDirectories.forEach(file => {
+
+
+//         const services_file_name = path.basename(file, '.js');
+
+//         const services_module = require(path.join(services_path, file));
+
+//         services[services_file_name] = services_module
+
+//     });
+//     return services;
+// }
+
 function loadUtilFunctions() {
     const functions = {};
-    const functionsPath = path.join(__dirname, '..', 'functions');
+    const functions_path = path.join(__dirname, '.', 'core', 'functions');
 
-    const functions_directory = fs.readdirSync(functionsPath);
+    const functionsDirectories = fs.readdirSync(functions_path);
+
+    functionsDirectories.forEach(file => {
 
 
+        const functions_file_name = path.basename(file, '.js');
 
-    functions_directory.forEach(moduleFiles => {
-        const functions_files_path = path.join(functionsPath, moduleFiles);
-        const functions_file_name = path.basename(functions_files_path,'.js')
-        
-        const functionsModule = require(path.join(functionsPath, moduleFiles))
-        functions[functions_file_name] = functionsModule;
+        const functions_module = require(path.join(functions_path, file));
+
+        functions[functions_file_name] = functions_module
+
     });
-
     return functions;
+}
+
+function loadCronFunctions() {
+    const crons = {};
+    const crons_path = path.join(__dirname, '.', 'core', 'crons');
+
+    const cronsDirectories = fs.readdirSync(crons_path);
+
+    cronsDirectories.forEach(file => {
+
+
+        const crons_file_name = path.basename(file, '.js');
+
+        const crons_module = require(path.join(crons_path, file));
+
+        crons[crons_file_name] = crons_module
+
+    });
+    return crons;
 }
 
 global.framework = {
     services: loadModulesAndServices(),
-    functions: loadUtilFunctions()
+    functions: loadUtilFunctions(),
+    crons:loadCronFunctions()
 };
 
 
@@ -160,12 +197,15 @@ loadRoutesData()
                 console.log(`All correct.. you can access routes`);
                 createServer();
 
-                
+
                 framework.services.module1.module1Service.myService1();
                 framework.services.module2.module2Service.myService2();
 
                 framework.functions.fileUtils.fileFunction();
                 framework.functions.mathUtils.mathFunction();
+
+                framework.crons.cron1.cron1Function();
+                framework.crons.cron2.cron2Function();
             }
         } catch (error) {
             console.error("Error parsing JSON:", error);
