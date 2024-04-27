@@ -4,7 +4,7 @@ const path = require('path');
 var colors = require('colors')
 const { adminSignup, adminLogin } = require('./api/module1/controllers/authController');
 
-function loadModulesAndServices() {
+function loadServicesInApi() {
     const services = {};
     let modules = {}
     const modulesPath = path.join(__dirname, '.', 'api');
@@ -42,7 +42,7 @@ function loadModulesAndServices() {
     return services;
 }
 
-// function loadModulesAndServicesInCore() {
+// function loadServicesInCore() {
 //     const services = {};
 //     const services_path = path.join(__dirname, '.', 'core', 'services');
 
@@ -99,21 +99,57 @@ function loadCronFunctions() {
     return crons;
 }
 
+function loadControllersInApi() {
+    const controllers = {};
+    let modules = {}
+    const modulesPath = path.join(__dirname, '.', 'api');
+
+    // Read the contents of the modules directory
+    const module_directory = fs.readdirSync(modulesPath);
+    modules = module_directory
+
+
+
+    // Iterate over each module directory
+    module_directory.forEach(moduleDir => {
+        const module_path = path.join(modulesPath, moduleDir);
+
+        // Check if it's a directory
+        // if (moduleStat.isDirectory()) {
+        const controllers_path = path.join(module_path, 'controllers');
+
+        const controllers_files = fs.readdirSync(controllers_path);
+
+        // Iterate over each file in the services directory
+        controllers_files.forEach(file => {
+            // Assuming services file starts with 'module'
+            // if (file.startsWith('module')) {
+            const controllersname = path.basename(file, '.js');
+            const a = controllersname.split('S')[0];
+            const controllersodule = require(path.join(controllers_path, file));
+            controllers[controllersname] = controllersodule;
+            // }
+        });
+    });
+
+    return controllers;
+}
+
 global.framework = {
-    services: loadModulesAndServices(),
+    services: loadServicesInApi(),
     functions: loadUtilFunctions(),
-    crons:loadCronFunctions()
+    crons: loadCronFunctions(),
+    controllers: loadControllersInApi()
 };
 
 
 
 function createServer() {
     http.createServer(function (req, res) {
-
         if (req.url == '/signup') {
-            adminSignup(req, res);
+            framework.controllers.authController.adminSignup(req,res);
         } else if (req.url == '/login') {
-            adminLogin(req, res);
+            framework.controllers.authController.adminLogin(req,res);
         }
 
     }).listen(8080, () => {
@@ -196,16 +232,17 @@ loadRoutesData()
             } else {
                 console.log(`All correct.. you can access routes`);
                 createServer();
-
-
                 framework.services.module1.module1Service.myService1();
                 framework.services.module2.module2Service.myService2();
-
+        
                 framework.functions.fileUtils.fileFunction();
                 framework.functions.mathUtils.mathFunction();
-
+        
                 framework.crons.cron1.cron1Function();
                 framework.crons.cron2.cron2Function();
+
+
+
             }
         } catch (error) {
             console.error("Error parsing JSON:", error);

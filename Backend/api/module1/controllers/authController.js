@@ -1,10 +1,8 @@
-function adminSignup(req, res) {
-    // res.writeHead(200, { 'Content-Type': 'text/plain' });
+function adminSignup(req,res) {
     res.end('Admin signed up successfully');
 }
 
-function adminLogin(req, res) {
-    // res.writeHead(200, { 'Content-Type': 'text/plain' });
+function adminLogin(req,res) {
     res.end('Admin Logged In successfully');
 }
 
