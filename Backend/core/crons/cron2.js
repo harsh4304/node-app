@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 
-cron.schedule('*/20 * * * * *', () => {
+cron.schedule('*/1 * * * *', () => {
     cron2Function()
 });
 function cron2Function() {
