@@ -1,5 +1,7 @@
 var http = require('http');
 var fs = require('fs');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const path = require('path');
 var colors = require('colors')
 
@@ -8,25 +10,17 @@ function loadServicesInApi() {
     let modules = {}
     const modulesPath = path.join(__dirname, '.', 'api');
 
-    // Read the contents of the modules directory
     const module_directory = fs.readdirSync(modulesPath);
     modules = module_directory
 
-
-
-    // Iterate over each module directory
     module_directory.forEach(moduleDir => {
         const module_path = path.join(modulesPath, moduleDir);
 
-        // Check if it's a directory
-        // if (moduleStat.isDirectory()) {
         const services_path = path.join(module_path, 'services');
 
         const services_files = fs.readdirSync(services_path);
 
-        // Iterate over each file in the services directory
         services_files.forEach(file => {
-            // Assuming services file starts with 'module'
             if (file.startsWith('module')) {
                 const service_name = path.basename(file, '.js');
                 const a = service_name.split('S')[0];
@@ -103,31 +97,21 @@ function loadControllersInApi() {
     let modules = {}
     const modulesPath = path.join(__dirname, '.', 'api');
 
-    // Read the contents of the modules directory
     const module_directory = fs.readdirSync(modulesPath);
     modules = module_directory
 
-
-
-    // Iterate over each module directory
     module_directory.forEach(moduleDir => {
         const module_path = path.join(modulesPath, moduleDir);
 
-        // Check if it's a directory
-        // if (moduleStat.isDirectory()) {
         const controllers_path = path.join(module_path, 'controllers');
 
         const controllers_files = fs.readdirSync(controllers_path);
 
-        // Iterate over each file in the services directory
         controllers_files.forEach(file => {
-            // Assuming services file starts with 'module'
-            // if (file.startsWith('module')) {
             const controllersname = path.basename(file, '.js');
             const a = controllersname.split('S')[0];
             const controllersodule = require(path.join(controllers_path, file));
             controllers[controllersname] = controllersodule;
-            // }
         });
     });
 
@@ -175,6 +159,8 @@ loadRoutesData()
             let hasMissingKeys = false;
             let missingRoutes = [];
             const requiredKeys = ["path", "method", "action", "public", "pathFromRoot", "enabled"];
+            var token = jwt.sign({ jsonArray }, process.env.SECRET_KEY, {expiresIn: '1d'});
+
 
             jsonArray.forEach((obj, index) => {
                 let missingKeys = [];
@@ -202,6 +188,20 @@ loadRoutesData()
                     }
                     else if (key === "action" && obj[key] === "") {
                         inValidValues.push(`\n[Error]: Invalid action (value) Configuration [Module]: routes.json [API]: ${obj.path}`);
+                    }
+                    else if(key === 'public' && obj[key] === false) {
+                        if (!token) {
+                            inValidValues.push(`\n[Error]: No token provided [API]: ${obj.path}`)
+                        }
+                        else {
+                            jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+                                if (err) {
+                                    inValidValues.push(`\n[Error]: Invalid token [API]: ${obj.path}`);
+                                }
+                                console.log(obj.path, '---> Token Verified');
+                            });
+                            return
+                        }
                     }
                 });
 
@@ -237,8 +237,8 @@ loadRoutesData()
                 framework.functions.fileUtils.fileFunction();
                 framework.functions.mathUtils.mathFunction();
         
-                framework.crons.cron1.cron1Function();
-                framework.crons.cron2.cron2Function();
+                // framework.crons.cron1.cron1Function();
+                // framework.crons.cron2.cron2Function();
 
 
 
