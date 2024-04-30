@@ -3,5 +3,5 @@ function myService1() {
 }
 
 module.exports = {
-    myService1
+    myService1:myService1
 };
