@@ -2,7 +2,7 @@
     {
         "path" : "/about",
         "method" : "GET",
-        "action" : "auth.adminSignup",
+        "action" : "module3.about",
         "public" : true,
         "globalMiddlewares": [],
         "middlewares": [],
@@ -12,7 +12,7 @@
     {
         "path" : "/contact",
         "method" : "GET",
-        "action" : "auth.adminLogin",
+        "action" : "module3.contact",
         "public" : true,
         "globalMiddlewares": [],
         "middlewares": [],
@@ -22,7 +22,7 @@
     {
         "path" : "/name",
         "method" : "GET",
-        "action" : "auth.adminSignup",
+        "action" : "module3.name",
         "public" : true,
         "globalMiddlewares": [],
         "middlewares": [],

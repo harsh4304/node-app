@@ -1,8 +1,8 @@
 [
     {
-        "path" : "/signup",
+        "path" : "/dashboard",
         "method" : "GET",
-        "action" : "auth.adminSignup",
+        "action" : "module2.dashboard",
         "public" : true,
         "globalMiddlewares": [],
         "middlewares": [],
@@ -10,9 +10,9 @@
         "enabled": true
     },
     {
-        "path" : "/login",
+        "path" : "/operator",
         "method" : "GET",
-        "action" : "auth.adminLogin",
+        "action" : "module2.operator",
         "public" : true,
         "globalMiddlewares": [],
         "middlewares": [],

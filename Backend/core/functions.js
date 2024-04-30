@@ -41,22 +41,29 @@ function loadUtilFunctions() {
 
         const functionsPath = path.join(modulePath, 'functions');
 
-        if (fs.existsSync(functionsPath)) {
-            const functionFiles = fs.readdirSync(functionsPath);
+        try {
 
-            functionFiles.forEach(file => {
-                const functionName = path.basename(file, '.js');
-                const functionModule = require(path.join(functionsPath, file));
-                
-                // Ensure the module exists in the functions object
-                if (!functions[moduleDir]) {
-                    functions[moduleDir] = {};
-                }
+            if (fs.existsSync(functionsPath)) {
+                const functionFiles = fs.readdirSync(functionsPath);
 
-                functions[moduleDir][functionName] = functionModule;
-            });
+                functionFiles.forEach(file => {
+                    const functionName = path.basename(file, '.js');
+                    const functionModule = require(path.join(functionsPath, file));
+
+                    // Ensure the module exists in the functions object
+                    if (!functions[moduleDir]) {
+                        functions[moduleDir] = {};
+                    }
+
+                    functions[moduleDir][functionName] = functionModule;
+                });
+            }
+        } catch (error) {
+            // If the services directory doesn't exist, ignore and continue
+            console.warn(`Warning: loading functions for [Module]: ${moduleDir}:`, error);
         }
     });
+
 
     return functions;
 }
