@@ -4,7 +4,7 @@ const colors = require('colors');
 const path = require('path');
 require('dotenv').config();
 
-function loadRoutesJson() {
+function loadRoutesJsonData() {
 
     const routesJson = {};
     var routesFilePath
@@ -31,6 +31,26 @@ function loadRoutesJson() {
         }
     });
     return Promise.resolve(routesJson)
+}
+
+function loadRoutesFromModules() {
+    const routes = [];
+    const modulesPath = path.join(__dirname,'..', 'api');
+
+    const moduleDirectories = fs.readdirSync(modulesPath);
+
+    moduleDirectories.forEach(moduleDir => {
+        const routesFilePath = path.join(modulesPath, moduleDir, 'routes.json');
+        try {
+            const routesData = fs.readFileSync(routesFilePath, 'utf8');
+            const moduleRoutes = JSON.parse(routesData);
+            routes.push(...moduleRoutes.map(route => ({ ...route, module: moduleDir })));
+        } catch (err) {
+            console.error(`Error loading routes from module ${moduleDir}:`, err);
+        }
+    });
+
+    return routes;
 }
 
 
@@ -142,4 +162,4 @@ function validateRoutes(routes) {
     }
 }
 
-module.exports = { loadRoutesJson, validateRoutes, loadControllersInApi };
+module.exports = { loadRoutesJsonData, validateRoutes, loadControllersInApi, loadRoutesFromModules };
