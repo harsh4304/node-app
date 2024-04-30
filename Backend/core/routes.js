@@ -36,25 +36,31 @@ function loadRoutesJson() {
 
 function loadControllersInApi() {
     const controllers = {};
-    let modules = {}
+
     const modulesPath = path.join(__dirname, '..', 'api');
 
-    const module_directory = fs.readdirSync(modulesPath);
-    modules = module_directory
+    const moduleDirectories = fs.readdirSync(modulesPath);
 
-    module_directory.forEach(moduleDir => {
-        const module_path = path.join(modulesPath, moduleDir);
+    moduleDirectories.forEach(moduleDir => {
+        const modulePath = path.join(modulesPath, moduleDir);
 
-        const controllers_path = path.join(module_path, 'controllers');
+        const controllersPath = path.join(modulePath, 'controllers');
 
-        const controllers_files = fs.readdirSync(controllers_path);
+        if (fs.existsSync(controllersPath)) {
+            const controllersFiles = fs.readdirSync(controllersPath);
 
-        controllers_files.forEach(file => {
-            const controllersname = path.basename(file, '.js');
-            const a = controllersname.split('S')[0];
-            const controllersodule = require(path.join(controllers_path, file));
-            controllers[controllersname] = controllersodule;
-        });
+            controllersFiles.forEach(file => {
+                const controllersName = path.basename(file, '.js');
+                const controllersModule = require(path.join(controllersPath, file));
+                
+                // Ensure the module exists in the functions object
+                if (!controllers[moduleDir]) {
+                    controllers[moduleDir] = {};
+                }
+
+                controllers[moduleDir][controllersName] = controllersModule;
+            });
+        }
     });
 
     return controllers;
