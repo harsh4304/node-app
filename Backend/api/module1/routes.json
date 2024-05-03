@@ -13,7 +13,7 @@
         "path" : "/login",
         "method" : "GET",
         "action" : "module1.adminLogin",
-        "public" : false,
+        "public" : true,
         "globalMiddlewares": [],
         "middlewares": [],
         "pathFromRoot": false,

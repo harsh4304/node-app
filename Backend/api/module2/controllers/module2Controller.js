@@ -1,9 +1,13 @@
-function dashboard(req,res) {
-    res.end('Admin signed up successfully');
+function dashboard(req,res,next) {
+    res.end('Dashboard page');
+        next()
+
 }
 
-function operator(req,res) {
-    res.end('Admin Logged In successfully');
+function operator(req,res,next) {
+    res.end('Operator page');
+        next()
+
 }
 
 module.exports = {

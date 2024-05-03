@@ -18,5 +18,15 @@
         "middlewares": [],
         "pathFromRoot": false,
         "enabled": true
+    },
+    {
+        "path" : "/event",
+        "method" : "GET",
+        "action" : "module2.operator",
+        "public" : true,
+        "globalMiddlewares": [],
+        "middlewares": [],
+        "pathFromRoot": false,
+        "enabled": true
     }
 ]
