@@ -40,38 +40,6 @@ function loadRoutesJsonData() {
     return Promise.resolve(routesJson)
 }
 
-
-// function handleRoutes(routes, req, res, next) {
-//     Object.values(routes).forEach(moduleRoutes => {
-//         moduleRoutes.forEach(route => {
-//             if (route.enabled) {
-//                 const routePath = route.path;
-//                 const method = route.method.toLowerCase(); // Convert method to lowercase
-//                 const middleware = []; // Define an array to store middleware
-
-//                 if (!route.public) {
-//                     middleware.push(verifyToken); // Add verifyToken middleware if route is not public
-//                 }
-
-//                 // Add route handler function
-//                 middleware.push((req, res, next) => {
-//                     handleAllRequests(req, res, next, routes); // Call handleAllRequests with routes
-//                 });
-
-//                 // Dynamically define the route using router[methodname]
-//                 router[method](routePath, middleware, (req, res, next) => { });
-
-//                 // Next middleware
-//                 next();
-//             }
-//         });
-//     });
-// }
-
-
-
-
-
 function getRoutesFromModules() {
     const routes = [];
     const modulesPath = path.join(__dirname, '..', 'api');
@@ -214,7 +182,6 @@ loadRoutesJsonData()
             router.use((req, res, next) => {
                 handleAllRequests(req,res,next)
             });
-            // router.all('*', );
         }
     })
     .catch(error => {
