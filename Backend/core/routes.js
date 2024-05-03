@@ -12,7 +12,7 @@ const { verifyToken } = require('../middleware/jwtAuthMiddleware')
 var isValid = false;
 
 function loadRoutesJsonData() {
-
+    colors.enable()
     const routesJson = {};
     var routesFilePath
 
@@ -34,7 +34,7 @@ function loadRoutesJsonData() {
                 console.error(`Error reading or parsing routes.json for module ${moduleDir}:`, err);
             }
         } else {
-            console.error(`routes.json file not found in module ${moduleDir} directory`);
+            console.warn(`Warning: routes.json file not found in module ${moduleDir} directory`.yellow);
         }
     });
     return Promise.resolve(routesJson)
@@ -73,32 +73,10 @@ function loadController(moduleName, functionName) {
     return null;
 }
 
-function handleAllRequests(req, res, next) {
-    const routes = getRoutesFromModules();
-    const { url, method } = req;
-    const route = routes.find(route => route.path === url && route.method === method);
-    if (route) {
-        const { action } = route;
-        const [moduleName, functionName] = action.split('.');
-        const controller = loadController(moduleName, functionName);
-        if (controller) {
-            if (!route.public) {
-                verifyToken(req,res,next)
-            }
-            else {
-                controller(req, res, next);
-                return;
-            }
-        }
-    }
-    next()
-}
-
 function validateRoutes(routes) {
     const requiredKeys = ["path", "method", "action", "public", "pathFromRoot", "enabled"];
     let hasMissingKeys = false;
     let missingRoutes = [];
-    // let token = jwt.sign({ jsonArray }, process.env.SECRET_KEY, { expiresIn: '1d' });
     Object.keys(routes).forEach(moduleName => {
         const moduleRoutes = routes[moduleName];
 
@@ -124,22 +102,6 @@ function validateRoutes(routes) {
                 } else if (key === "action" && obj[key] === "") {
                     inValidValues.push(`\n[Error]: Invalid action (value) Configuration [Module]: routes.json [API]: ${obj.path}`);
                 }
-                //  else if (key === 'public' && obj[key] === false) {
-
-
-
-                //     if (!token) {
-                //         inValidValues.push(`\n[Error]: No token provided [API]: ${obj.path}`)
-                //     } else {
-                //         jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-                //             if (err) {
-                //                 inValidValues.push(`\n[Error]: Invalid token [API]: ${obj.path}`);
-                //             }
-                //             console.log(obj.path, '---> Token Verified');
-                //         });
-                //         return;
-                //     }
-                // }
             });
 
             if (missingKeys.length > 0 || emptyValues.length > 0 || inValidValues.length > 0) {
@@ -172,6 +134,29 @@ function validateRoutes(routes) {
         return true;
     }
 }
+
+function handleAllRequests(req, res, next) {
+    const routes = getRoutesFromModules();
+    const { url, method } = req;
+    const route = routes.find(route => route.path === url && route.method === method);
+    if (route) {
+        const { action } = route;
+        const [moduleName, functionName] = action.split('.');
+        const controller = loadController(moduleName, functionName);
+        if (controller) {
+            if (!route.public) {
+                verifyToken(req,res,next)
+            }
+            else {
+                controller(req, res, next);
+                return;
+            }
+        }
+    }
+    next()
+}
+
+
 
 
 loadRoutesJsonData()

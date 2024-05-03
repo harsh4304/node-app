@@ -1,11 +1,9 @@
-var http = require('http');
 const express = require('express');
 const app = express();
 const { loadUtilFunctions } = require('./core/functions');
 const { loadServicesInApi } = require('./core/services')
 const { loadCronFunctions } = require('./core/crons')
 const { router, setValidCallback } = require('./core/routes');
-// const router = express.Router();
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
