@@ -26,6 +26,7 @@
     "node-cron": "^3.0.3",
     "nodemon": "^3.1.0",
     "os": "^0.1.2",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2"
   }
 }
