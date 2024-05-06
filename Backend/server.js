@@ -4,7 +4,7 @@ const { loadUtilFunctions } = require('./core/functions');
 const { loadServicesInApi } = require('./core/services')
 const { loadCronFunctions } = require('./core/crons')
 const { router, setValidCallback } = require('./core/routes');
-
+const { checkMigrations } = require('./core/testMigrations')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
@@ -17,16 +17,25 @@ const framework = {
 global.framework = framework;
 
 function createServer() {
+
     app.use(router)
     app.listen(8080, () => {
         console.log('Server is running on port 8080');
     });
-    
+
 }
+
 setValidCallback((isValid) => {
     if (isValid) {
         framework.functions.module1.fileUtils.fileFunction();
-        createServer();
+
+        checkMigrations((isMigrationsUpToDate) => {
+            if (isMigrationsUpToDate) {
+                createServer();
+            } else {
+                createServer()
+            }
+        });
     } else {
         console.error("Invalid routes. Server cannot start.");
     }

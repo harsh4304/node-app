@@ -156,9 +156,6 @@ function handleAllRequests(req, res, next) {
     next()
 }
 
-
-
-
 loadRoutesJsonData()
     .then(routes => {
         isValid = validateRoutes(routes);
