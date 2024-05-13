@@ -1,17 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const { exec } = require('child_process');
 const readline = require('readline');
-const jsondata = require('../db/config/config.js');
+const { sequelize } = require('../db/models/index');
 
-const sequelize = new Sequelize(
-    jsondata.development.database,
-    jsondata.development.username,
-    jsondata.development.password, {
-    dialect: jsondata.development.dialect,
-    logging: false
-});
 
 const SequelizeMeta = sequelize.define('SequelizeMeta', {
     name: {
@@ -41,6 +34,7 @@ function loadMigrations() {
 
     return [];
 }
+
 
 function checkMigrations(callback) {
     const migrationFiles = loadMigrations();

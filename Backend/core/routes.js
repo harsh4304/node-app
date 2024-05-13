@@ -7,6 +7,7 @@ const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 const router = express.Router();
+const {checkMigrations} = require('./testMigrations')
 const { verifyToken } = require('../middleware/jwtAuthMiddleware')
 
 var isValid = false;
@@ -155,28 +156,45 @@ function handleAllRequests(req, res, next) {
     }
     next()
 }
+// let isValidCallback;
 
+function initializeServer(createServer){
 loadRoutesJsonData()
     .then(routes => {
         isValid = validateRoutes(routes);
         if (isValid) {
-            isValidCallback(true);
+            framework.functions.module1.fileUtils.fileFunction();
+
+            checkMigrations((isMigrationsUpToDate) => {
+                if (isMigrationsUpToDate) {
+                    createServer();
+                } else {
+                    createServer()
+                }
+            });
             router.use((req, res, next) => {
                 handleAllRequests(req,res,next)
             });
+        } else {
+            console.error("Invalid routes. Server cannot start.");
         }
+        // if (isValid) {
+        //     isValidCallback(true);
+        //     router.use((req, res, next) => {
+        //         handleAllRequests(req,res,next)
+        //     });
+        // }
     })
     .catch(error => {
         console.error("Error reading or validating routes:", error);
     });
 
-
-let isValidCallback;
-
-function setValidCallback(callback) {
-    isValidCallback = callback;
 }
 
+// function setValidCallback(callback) {
+//     isValidCallback = callback;
+// }
 
 
-module.exports = { router, setValidCallback };
+
+module.exports = { router, initializeServer };

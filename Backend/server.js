@@ -3,8 +3,8 @@ const app = express();
 const { loadUtilFunctions } = require('./core/functions');
 const { loadServicesInApi } = require('./core/services')
 const { loadCronFunctions } = require('./core/crons')
-const { router, setValidCallback } = require('./core/routes');
-const { checkMigrations } = require('./core/testMigrations')
+const { router, initializeServer } = require('./core/routes');
+const { getModels } = require('./core/models');
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
@@ -12,6 +12,7 @@ const framework = {
     services: loadServicesInApi(),
     functions: loadUtilFunctions(),
     crons: loadCronFunctions(),
+    models: getModels()
 }
 
 global.framework = framework;
@@ -25,20 +26,24 @@ function createServer() {
 
 }
 
-setValidCallback((isValid) => {
-    if (isValid) {
-        framework.functions.module1.fileUtils.fileFunction();
+function startServer() {
+    initializeServer(createServer)
+    // setValidCallback((isValid) => {
+    //     if (isValid) {
+    //         framework.functions.module1.fileUtils.fileFunction();
 
-        checkMigrations((isMigrationsUpToDate) => {
-            if (isMigrationsUpToDate) {
-                createServer();
-            } else {
-                createServer()
-            }
-        });
-    } else {
-        console.error("Invalid routes. Server cannot start.");
-    }
-});
+    //         checkMigrations((isMigrationsUpToDate) => {
+    //             if (isMigrationsUpToDate) {
+    //                 createServer();
+    //             } else {
+    //                 createServer()
+    //             }
+    //         });
+    //     } else {
+    //         console.error("Invalid routes. Server cannot start.");
+    //     }
+    // });
+}
 
+module.exports = { startServer }
 
