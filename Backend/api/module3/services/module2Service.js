@@ -1,8 +1,8 @@
-function myService2() {
-    console.log('module2Service ---> myService2 function');
+function myService3() {
+    console.log('module3Service ---> myService3 function');
     console.log('');
 }
 
 module.exports = {
-    myService2
+    myService3
 };

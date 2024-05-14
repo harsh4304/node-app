@@ -12,7 +12,7 @@ else if (process.argv[2] === ('--create' || '--c')) {
         createModule(process.argv[5]);
     }
     else if (process.argv[3] === 'api') {
-        createApi(process.argv.slice(2));
+        createApi(process.argv[5]);
     }
 }
 else {

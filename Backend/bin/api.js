@@ -3,7 +3,6 @@ const path = require('path');
 const readline = require('readline');
 
 function createApi(apidata) {
-    console.log(apidata);
     if (apidata === undefined) {
         const rl = readline.createInterface({
             input: process.stdin,
@@ -19,52 +18,68 @@ function createApi(apidata) {
             if (answer) {
                 if (moduleDirectories.includes(answer)) {
                     const chosenModule = path.join(__dirname, '..', 'api', answer, 'routes.json');
-                    console.log(chosenModule);
+                    console.log(`Selected Module : ${answer}`);
+
+                    rl.question(`Enter method: `, (method) => {
+                        rl.question(`Enter endpoint path (/): `, (endpoint) => {
+                            rl.question(`Enter action: `, (action) => {
+                                rl.question(`Is public (y/N): `, (isPublic) => {
+                                    rl.question(`Enter module middlewares (comma-separated): `, (moduleMiddlewares) => {
+                                        rl.question(`Enter global middlewares (comma-separated): `, (globalMiddlewares) => {
+                                            rl.question(`Is path from root (y/N): `, (isPathFromRoot) => {
+                                                rl.question(`Is enabled (y/N): `, (isEnabled) => {
+                                                    const data = {
+                                                        path: endpoint,
+                                                        method: method,
+                                                        action: action,
+                                                        public: isPublic.toLowerCase() === 'y' ? true : false,
+                                                        globalMiddlewares: globalMiddlewares.split(',').map(m => m.trim()),
+                                                        middlewares: moduleMiddlewares.split(',').map(m => m.trim()),
+                                                        pathFromRoot: isPathFromRoot.toLowerCase() === 'y' ? true : false,
+                                                        enabled: isEnabled.toLowerCase() === 'y' ? true : false
+                                                    };
+
+                                                    let existingData = [];
+                                                    try {
+                                                        existingData = JSON.parse(fs.readFileSync(chosenModule));
+                                                    } catch (error) {
+                                                        console.error("Error reading existing data:", error);
+                                                    }
+
+                                                    existingData.push(data)
+
+                                                    fs.writeFile(chosenModule, JSON.stringify(existingData, null, 2), (err) => {
+                                                        if (err) {
+                                                            console.error("Error writing updated data:", err);
+                                                            return;
+                                                        }
+                                                        console.log(`Data appended successfully to ${chosenModule}`);
+
+                                                        rl.close();
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    console.log(`Module '${answer}' not found.`);
+                    rl.close();
                 }
+            } else {
+                console.log(`No module selected.`);
+                rl.close();
             }
-            rl.close();
-
-
-
-            //         const moduleName = answer;
-            //         const modulePath = path.join(__dirname, '..', 'api', moduleName);
-
-            //         fs.mkdirSync(modulePath);
-
-            //         fs.createWriteStream(path.join(modulePath, 'routes.json'));
-            //         fs.mkdirSync(path.join(modulePath, 'services'));
-            //         fs.mkdirSync(path.join(modulePath, 'functions'));
-            //         fs.mkdirSync(path.join(modulePath, 'controllers'));
-            //         fs.mkdirSync(path.join(modulePath, 'middlewares'));
-            //         console.log(Module '${moduleName}' created successfully..green);
-
-            //     } else {
-            //         console.log(Module '${answer}' already exists..yellow);
-            //     }
-            // } else {
-            //     console.log(Module creation cancelled due to improper name..yellow);
-            // }
         });
-    }
-    else {
-        // if (!fs.existsSync(name)) {
-
-        //     const moduleName = name;
-        //     const modulePath = path.join(__dirname, '..', 'api', moduleName);
-
-        //     fs.mkdirSync(modulePath);
-
-        //     fs.createWriteStream(path.join(modulePath, 'routes.json'));
-        //     fs.mkdirSync(path.join(modulePath, 'services'));
-        //     fs.mkdirSync(path.join(modulePath, 'functions'));
-        //     fs.mkdirSync(path.join(modulePath, 'controllers'));
-        //     fs.mkdirSync(path.join(modulePath, 'middlewares'));
-        //     console.log(Module '${moduleName}' created successfully..green);
-        // } else {
-        //     console.log(Module '${moduleName}' already exists..yellow);
-        // }
-
+    } else {
+        // Create API based on provided data
+        const { module, method, endpoint, action, isPublic, moduleMiddlewares, globalMiddlewares, isPathFromRoot } = apidata;
+        // Here you can implement the logic to create the API using the provided data
+        console.log(`API created successfully for module '${module}' with method '${method}', endpoint '${endpoint}', action '${action}', isPublic '${isPublic}', moduleMiddlewares '${moduleMiddlewares.join(', ')}', globalMiddlewares '${globalMiddlewares.join(', ')}', isPathFromRoot '${isPathFromRoot}'.`);
     }
 }
 
-module.exports = { createApi }
+module.exports = { createApi };

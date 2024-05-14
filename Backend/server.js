@@ -4,7 +4,7 @@ const { loadUtilFunctions } = require('./core/functions');
 const { loadServicesInApi } = require('./core/services')
 const { loadCronFunctions } = require('./core/crons')
 const { router, initializeServer } = require('./core/routes');
-const { getModels } = require('./core/models');
+const { db } = require('./core/models');
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
@@ -12,7 +12,7 @@ const framework = {
     services: loadServicesInApi(),
     functions: loadUtilFunctions(),
     crons: loadCronFunctions(),
-    models: getModels()
+    db: db
 }
 
 global.framework = framework;

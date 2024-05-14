@@ -1,28 +1,44 @@
-const path = require('path');
+'use strict';
+
 const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const process = require('process');
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || 'development';
+const config = require('../db/config/config')[env];
+const db = {};
 
-function getModels() {
-    const models = {}
-    const modelsPath = path.join(__dirname, '..', 'db', 'models');
+let sequelize;
+if (config.use_env_variable) {
+    sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+    sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
+const modelsDirectory = path.join(__dirname, '/../db/models');
 
-    try {
-        if (fs.existsSync(modelsPath)) {
-            const modelsFiles = fs.readdirSync(modelsPath);
-            modelsFiles.map(file => path.basename(file, '.js'));
-            modelsFiles.forEach(file => {
-                const serviceName = path.basename(file, '.js');
-                const serviceModule = require(path.join(modelsPath, file));
-                models[serviceName] = serviceModule
-            });
-        } else {
-            console.warn('Models folder not found.');
-        }
-    } catch (error) {
-        console.warn('Error loading models:', error);
+fs
+    .readdirSync(modelsDirectory)
+    .filter(file => {
+        return (
+            file.indexOf('.') !== 0 &&
+            file !== basename &&
+            file.slice(-3) === '.js' &&
+            file.indexOf('.test.js') === -1
+        );
+    })
+    .forEach(file => {
+        const model = require(path.join(modelsDirectory, file))(sequelize, Sequelize.DataTypes);
+        db[model.name] = model;
+    });
+
+Object.keys(db).forEach(modelName => {
+    if (db[modelName].associate) {
+        db[modelName].associate(db);
     }
-    return models;
-}
+});
 
-module.exports = {
-    getModels
-}
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;

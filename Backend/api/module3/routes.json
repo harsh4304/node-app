@@ -1,32 +1,46 @@
 [
-    {
-        "path" : "/about",
-        "method" : "GET",
-        "action" : "module3.about",
-        "public" : true,
-        "globalMiddlewares": [],
-        "middlewares": [],
-        "pathFromRoot": false,
-        "enabled": true
-    },
-    {
-        "path" : "/contact",
-        "method" : "GET",
-        "action" : "module3.contact",
-        "public" : true,
-        "globalMiddlewares": [],
-        "middlewares": [],
-        "pathFromRoot": false,
-        "enabled": true
-    },
-    {
-        "path" : "/name",
-        "method" : "GET",
-        "action" : "module3.name",
-        "public" : true,
-        "globalMiddlewares": [],
-        "middlewares": [],
-        "pathFromRoot": false,
-        "enabled": true
-    }
+  {
+    "path": "/about",
+    "method": "GET",
+    "action": "module3.about",
+    "public": true,
+    "globalMiddlewares": [],
+    "middlewares": [],
+    "pathFromRoot": false,
+    "enabled": true
+  },
+  {
+    "path": "/contact",
+    "method": "GET",
+    "action": "module3.contact",
+    "public": true,
+    "globalMiddlewares": [],
+    "middlewares": [],
+    "pathFromRoot": false,
+    "enabled": true
+  },
+  {
+    "path": "/name",
+    "method": "GET",
+    "action": "module3.name",
+    "public": true,
+    "globalMiddlewares": [],
+    "middlewares": [],
+    "pathFromRoot": false,
+    "enabled": true
+  },
+  {
+    "path": "/harsh",
+    "method": "GET",
+    "action": "module3.about",
+    "public": true,
+    "globalMiddlewares": [
+      "module3.about"
+    ],
+    "middlewares": [
+      "module3.about"
+    ],
+    "pathFromRoot": true,
+    "enabled":true
+  }
 ]

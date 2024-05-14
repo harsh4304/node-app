@@ -3,7 +3,7 @@ const path = require('path');
 const { DataTypes } = require('sequelize');
 const { exec } = require('child_process');
 const readline = require('readline');
-const { sequelize } = require('../db/models/index');
+const {sequelize} = require('./models');
 
 
 const SequelizeMeta = sequelize.define('SequelizeMeta', {
