@@ -75,10 +75,36 @@ function createApi(apidata) {
             }
         });
     } else {
-        // Create API based on provided data
-        const { module, method, endpoint, action, isPublic, moduleMiddlewares, globalMiddlewares, isPathFromRoot } = apidata;
-        // Here you can implement the logic to create the API using the provided data
-        console.log(`API created successfully for module '${module}' with method '${method}', endpoint '${endpoint}', action '${action}', isPublic '${isPublic}', moduleMiddlewares '${moduleMiddlewares.join(', ')}', globalMiddlewares '${globalMiddlewares.join(', ')}', isPathFromRoot '${isPathFromRoot}'.`);
+        const { method, endpoint, action, isPublic, moduleMiddlewares, globalMiddlewares, isPathFromRoot } = apidata;
+        const data = {
+            path: endpoint,
+            method: method,
+            action: action,
+            public: isPublic.toLowerCase() === 'y' ? true : false,
+            globalMiddlewares: globalMiddlewares.split(',').map(m => m.trim()),
+            middlewares: moduleMiddlewares.split(',').map(m => m.trim()),
+            pathFromRoot: isPathFromRoot.toLowerCase() === 'y' ? true : false,
+            enabled: isEnabled.toLowerCase() === 'y' ? true : false
+        };
+
+        let existingData = [];
+        try {
+            existingData = JSON.parse(fs.readFileSync(chosenModule));
+        } catch (error) {
+            console.error("Error reading existing data:", error);
+        }
+
+        existingData.push(data)
+
+        fs.writeFile(chosenModule, JSON.stringify(existingData, null, 2), (err) => {
+            if (err) {
+                console.error("Error writing updated data:", err);
+                return;
+            }
+            console.log(`Data appended successfully to ${chosenModule}`);
+
+            rl.close();
+        });
     }
 }
 

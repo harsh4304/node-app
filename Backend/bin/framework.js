@@ -14,6 +14,9 @@ else if (process.argv[2] === ('--create' || '--c')) {
     else if (process.argv[3] === 'api') {
         createApi(process.argv[5]);
     }
+    else if(process.argv[3] === 'crons') {
+        createCrons(process.argv[5])
+    }
 }
 else {
     console.log('Unknown command. Usage: framework start');

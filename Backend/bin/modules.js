@@ -84,13 +84,13 @@ function createModule(name) {
                         console.log(`Middlewares file for '${moduleName}' created successfully.`.green);
                     });
 
-                    console.log(`Module '${moduleName}' created successfully..green`);
+                    console.log(`Module '${moduleName}' created successfully.`.green);
 
                 } else {
-                    console.log(`Module '${answer}' already exists..yellow`);
+                    console.log(`Module '${answer}' already exists.`.yellow);
                 }
             } else {
-                console.log(`Module creation cancelled due to improper name..yellow`);
+                console.log(`Module creation cancelled due to improper name.`.yellow);
             }
         });
     }
