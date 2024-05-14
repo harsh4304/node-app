@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const colors = require('colors');
-const cron = require('node-cron');
 
 colors.enable();
 
@@ -60,5 +59,3 @@ function createCrons(name) {
 
 module.exports = { createCrons };
 
-// Usage:
-// createCrons();
