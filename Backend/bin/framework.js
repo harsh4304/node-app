@@ -3,6 +3,7 @@
 const { startServer } = require('../server.js');
 const { createModule } = require('./modules.js');
 const { createApi } = require('./api.js');
+const {createCrons} = require('./crons.js')
 
 if (process.argv[2] === 'start') {
     startServer();
