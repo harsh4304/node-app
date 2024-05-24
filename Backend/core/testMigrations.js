@@ -3,10 +3,11 @@ const path = require('path');
 const { DataTypes } = require('sequelize');
 const { exec } = require('child_process');
 const readline = require('readline');
-const {sequelize} = require('./models');
+const {db} = require('./models');
+const colors = require('colors')
+colors.enable()
 
-
-const SequelizeMeta = sequelize.define('SequelizeMeta', {
+const SequelizeMeta = db.sequelize.define('SequelizeMeta', {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -18,7 +19,7 @@ const SequelizeMeta = sequelize.define('SequelizeMeta', {
 });
 
 function loadMigrations() {
-    const migrationsPath = path.join(__dirname, '..', 'db', 'migrations');
+    const migrationsPath = path.join(__dirname, '..', 'db','sequelize', 'migrations');
 
     try {
         if (fs.existsSync(migrationsPath)) {
@@ -26,10 +27,10 @@ function loadMigrations() {
 
             return migrationsFiles.map(file => path.basename(file, '.js'));
         } else {
-            console.warn('Migrations folder not found.');
+            console.warn('Migrations folder not found.'.yellow);
         }
     } catch (error) {
-        console.warn('Error loading migrations:', error);
+        console.warn(`Error loading migrations:, ${error}`.red);
     }
 
     return [];
@@ -40,7 +41,7 @@ function checkMigrations(callback) {
     const migrationFiles = loadMigrations();
 
     try {
-        SequelizeMeta.findAll({ raw: true }).then(executedMigrations => {
+        SequelizeMeta.findAll({ raw: true, logging:false }).then(executedMigrations => {
             const executedMigrationNames = executedMigrations.map(migration => migration.name.split('.')[0]);
 
             const pendingMigrations = migrationFiles.filter(file => !executedMigrationNames.includes(file));
@@ -56,14 +57,14 @@ function checkMigrations(callback) {
                     if (answer.toLowerCase() === 'y' || answer === 'Y') {
                         exec('npx sequelize-cli db:migrate', (error, stdout, stderr) => {
                             if (error) {
-                                console.error(`Error running migrations: ${error.message}`);
+                                console.error(`Error running migrations: ${error.message}`.red);
                                 return;
                             }
                             if (stderr) {
-                                console.error(`Error running migrations: ${stderr}`);
+                                console.error(`Error running migrations: ${stderr}`.red);
                                 return;
                             }
-                            console.log(`Migrations executed successfully: ${stdout}`);
+                            console.log(`Migrations executed successfully: ${stdout}`.green);
                             callback(true)
                         });
                         
@@ -80,11 +81,11 @@ function checkMigrations(callback) {
 
             }
         }).catch(error => {
-            console.error('Error checking migration status:', error);
+            console.error(`Error checking migration status:, ${error}`.red);
             callback(false);
         });
     } catch (error) {
-        console.error('Error loading migrations:', error);
+        console.error(`Error loading migrations:, ${error}`.red);
         callback(false);
     }
 }

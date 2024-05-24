@@ -5,6 +5,7 @@ const { loadServicesInApi } = require('./core/services')
 const { loadCronFunctions } = require('./core/crons')
 const { router, initializeServer } = require('./core/routes');
 const { db } = require('./core/models');
+const { getMongoModels} = require('./core/models')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
@@ -12,12 +13,15 @@ const framework = {
     services: loadServicesInApi(),
     functions: loadUtilFunctions(),
     crons: loadCronFunctions(),
-    db: db
+    sequelize: db,
+    mongo: getMongoModels()
 }
 
 global.framework = framework;
 
 function createServer() {
+    console.log('==> sequelize models: ',framework.sequelize.models.Employee);
+    console.log('==> mongo models: ',framework.mongo.models.user);
 
     app.use(router)
     app.listen(8080, () => {
@@ -28,21 +32,6 @@ function createServer() {
 
 function startServer() {
     initializeServer(createServer)
-    // setValidCallback((isValid) => {
-    //     if (isValid) {
-    //         framework.functions.module1.fileUtils.fileFunction();
-
-    //         checkMigrations((isMigrationsUpToDate) => {
-    //             if (isMigrationsUpToDate) {
-    //                 createServer();
-    //             } else {
-    //                 createServer()
-    //             }
-    //         });
-    //     } else {
-    //         console.error("Invalid routes. Server cannot start.");
-    //     }
-    // });
 }
 
 module.exports = { startServer }

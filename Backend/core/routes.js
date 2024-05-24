@@ -8,7 +8,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 const router = express.Router();
 const {checkMigrations} = require('./testMigrations')
-const { verifyToken } = require('../middleware/jwtAuthMiddleware')
+const { verifyToken } = require('../middleware/jwtAuthMiddleware');
+
 
 var isValid = false;
 
@@ -156,7 +157,6 @@ function handleAllRequests(req, res, next) {
     }
     next()
 }
-// let isValidCallback;
 
 function initializeServer(createServer){
 loadRoutesJsonData()
@@ -164,6 +164,7 @@ loadRoutesJsonData()
         isValid = validateRoutes(routes);
         if (isValid) {
             framework.functions.module1.fileUtils.fileFunction();
+            
 
             checkMigrations((isMigrationsUpToDate) => {
                 if (isMigrationsUpToDate) {
@@ -178,23 +179,13 @@ loadRoutesJsonData()
         } else {
             console.error("Invalid routes. Server cannot start.");
         }
-        // if (isValid) {
-        //     isValidCallback(true);
-        //     router.use((req, res, next) => {
-        //         handleAllRequests(req,res,next)
-        //     });
-        // }
+        
     })
     .catch(error => {
         console.error("Error reading or validating routes:", error);
     });
 
 }
-
-// function setValidCallback(callback) {
-//     isValidCallback = callback;
-// }
-
 
 
 module.exports = { router, initializeServer };
